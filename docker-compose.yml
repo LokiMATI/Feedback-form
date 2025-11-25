@@ -1,20 +1,19 @@
-version: "3"
+version: '3.9'
 
 services:
-  db:
-    image: mysql:latest
-    restart: always
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: Feedback
-      MYSQL_USER: Lucky
-      MYSQL_PASSWORD: root
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    restart: always
+      POSTGRES_USER: Lucky
+      POSTGRES_PASSWORD: 58365836
+      POSTGRES_DB: Feedback
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-    - "8080:80" 
-    environment:
-      PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: root
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
+    
+volumes:
+  pgdata:
+    driver: local
