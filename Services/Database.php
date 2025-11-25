@@ -6,30 +6,23 @@ use PDOException;
 
 class Database
 {
-    private PDO $connection;
+    private static ?PDO $connection = null;
     
-    public function __construct(
-        string $host = 'localhost',
-        int $port = 5432, // Порт PostgreSQL по умолчанию
-        string $dbname = 'Feedback',
-        string $username = 'Lucky',
-        string $password = '58365836'
-    ) {
-        try {
-            // DSN для PostgreSQL
-            $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
-            
-            $this->connection = new PDO($dsn, $username, $password);
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new PDOException("PostgreSQL connection failed: " . $e->getMessage());
-        }
-    }
-    
-    public function getConnection(): PDO
+    public static function getConnection(): PDO
     {
-        return $this->connection;
+        if (self::$connection === null) {
+            $config = require __DIR__ . '/../../config/database.php';
+            
+            try {
+                $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['dbname']}";
+                self::$connection = new PDO($dsn, $config['username'], $config['password']);
+                self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                throw new PDOException("Database connection failed: " . $e->getMessage());
+            }
+        }
+        
+        return self::$connection;
     }
 }
 ?>
