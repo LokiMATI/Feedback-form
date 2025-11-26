@@ -127,6 +127,66 @@
         .nav a:hover {
             text-decoration: underline;
         }
+
+        .error-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .error-content {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: #e9ecef;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: #343a40;
+        }
+
+        .error-message {
+            font-size: 18px;
+            color: #6c757d;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .error-actions {
+            margin-bottom: 30px;
+        }
+
+        .error-actions .btn {
+            margin: 0 10px 10px 0;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .error-help {
+            border-top: 1px solid #dee2e6;
+            padding-top: 20px;
+            color: #6c757d;
+        }
+
+        .error-help a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .error-help a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>

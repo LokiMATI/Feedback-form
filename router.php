@@ -1,6 +1,9 @@
 <?php
+
+use App\Controllers\ErrorController;
 require_once __DIR__ . '/vendor/autoload.php';
 require_once 'Controllers/ReviewController.php';
+require_once 'Controllers/ErrorController.php';
 
 session_start();
 
@@ -21,7 +24,7 @@ $routes = [
 if (isset($routes[$method][$request])) {
     list($controller, $action) = explode('@', $routes[$method][$request]);
     $controllerClass = "app\\controllers\\$controller";
-    
+
     if (class_exists($controllerClass)) {
         $controllerInstance = new $controllerClass();
         
@@ -31,7 +34,6 @@ if (isset($routes[$method][$request])) {
         echo "Контроллер не найден";
     }
 } else {
-    http_response_code(404);
-    echo "Страница не найдена";
+    ErrorController::notFound();
 }
 ?>
