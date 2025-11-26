@@ -1,5 +1,6 @@
 <?php
 $content = ob_start();
+include __DIR__ . '/../layout.php';
 ?>
 <div class="card">
     <h1>Добавить отзыв</h1>
@@ -9,6 +10,13 @@ $content = ob_start();
             <input type="text" id="full_name" name="full_name" 
                    value="<?= isset($formData) ? htmlspecialchars($formData['full_name']) : '' ?>" 
                    required maxlength="100">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Ваш Email:</label>
+            <input type="text" id="email" name="email" 
+                   value="<?= isset($formData) ? htmlspecialchars($formData['email']) : '' ?>" 
+                   required maxlength="255">
         </div>
         
         <div class="form-group">
@@ -38,8 +46,3 @@ $content = ob_start();
     <?php endif; ?>
 </div>
 <?php endif; ?>
-
-<?php
-$content = ob_get_clean();
-include __DIR__ . '/../layout.php';
-?>

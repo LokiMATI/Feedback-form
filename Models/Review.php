@@ -10,17 +10,20 @@ class Review{
 
     public string $fullName;
 
+    public string $email;
+
     public string $message;
 
-    public function __construct(string $FullName = '', string $message = '')
+    public function __construct(string $fullName, string $email, string $message)
     {
-        $this->fullName = $FullName;
+        $this->fullName = $fullName;
+        $this->email = $email;
         $this->message = $message;
     }
 
     public function isValid(): bool
     {
-        return !empty(trim($this->fullName)) && !empty(trim($this->message));
+        return !empty(trim($this->fullName)) && !empty(trim($this->message)) && filter_var($this->email, FILTER_VALIDATE_EMAIL);
     }
     
     public function getValidationErrors(): array
@@ -37,6 +40,10 @@ class Review{
         
         if (strlen(trim($this->fullName)) > 100) {
             $errors[] = 'Имя слишком длинное (максимум 100 символов)';
+        }
+
+        if (filter_var($this->email, FILTER_VALIDATE_EMAIL)){
+            $errors[] = 'Неверный ввод email';
         }
         
         return $errors;

@@ -1,8 +1,13 @@
 <?php
 namespace app\services;
 
+require_once '../Models/Review.php';
+require_once '../Repositories/ReviewRepository.php';
+require_once 'Database.php';
+
 use app\repositories\ReviewRepository;
 use app\models\Review;
+use Exception;
 
 class ReviewService
 {
@@ -14,21 +19,21 @@ class ReviewService
         $this->reviewRepository = new ReviewRepository($connection);
     }
     
-    public function createReview(string $fullName, string $message): array
+    public function createReview(string $fullName, string $email, string $message): array
     {
         $result = [
             'success' => false,
             'review' => null,
             'errors' => []
         ];
-        
-        $review = new Review($fullName, $message);
+
+        $review = new Review($fullName, $email, $message);
         
         if (!$review->isValid()) {
             $result['errors'] = $review->getValidationErrors();
             return $result;
         }
-        
+
         try {
             $success = $this->reviewRepository->create($review);
             
@@ -38,7 +43,7 @@ class ReviewService
             } else {
                 $result['errors'] = ['Ошибка при сохранении в базу данных'];
             }
-        } catch (\PDOException $e) {
+        } catch (Exception $e) {
             $result['errors'] = ['Ошибка базы данных: ' . $e->getMessage()];
         }
         

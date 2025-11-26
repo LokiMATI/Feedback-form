@@ -1,6 +1,8 @@
 <?php
 namespace app\controllers;
 
+require_once '../Services/ReviewService.php';
+
 use app\services\ReviewService;
 
 class ReviewController
@@ -17,7 +19,6 @@ class ReviewController
      */
     public function create(): void
     {
-        $reviews = $this->reviewService->getAllReviews();
         require __DIR__ . '/../Views/review/create.php';
     }
     
@@ -32,15 +33,18 @@ class ReviewController
         }
         
         $fullName = trim($_POST['full_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
         $message = trim($_POST['message'] ?? '');
         
-        $result = $this->reviewService->createReview($fullName, $message);
+        
+        $result = $this->reviewService->createReview($fullName, $email, $message);
         
         if ($result['success']) {
             $_SESSION['success_message'] = 'Отзыв успешно добавлен!';
         } else {
             $_SESSION['form_data'] = [
                 'full_name' => $fullName,
+                'email'=> $email,
                 'message' => $message
             ];
             $_SESSION['errors'] = $result['errors'];

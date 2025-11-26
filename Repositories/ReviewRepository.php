@@ -16,16 +16,21 @@ class ReviewRepository
     
     public function create(Review $review): bool
     {
-        $sql = "INSERT INTO reviews (publication_time, full_name, message) 
-                VALUES (:publication_time, :full_name, :message) 
+        $sql = "INSERT INTO reviews ( full_name, message, email) 
+                VALUES ( :full_name, :message, :email) 
                 RETURNING id";
         
         $stmt = $this->connection->prepare($sql);
+
+        echo "Test";
+
         $stmt->execute([
-            'publication_time' => $review->publicationTime->format('Y-m-d H:i:s'),
-            'full_name' => trim($review->FullName),
-            'message' => trim($review->message)
+            ':full_name' => trim($review->fullName),
+            ':message' => trim($review->message),
+            ':email' => trim($review->email)
         ]);
+
+        echo "Test";
         
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result && isset($result['id'])) {
@@ -38,8 +43,11 @@ class ReviewRepository
     
     public function findAll(): array
     {
-        $sql = "SELECT id, publication_time, full_name, message FROM reviews ORDER BY publication_time DESC";
+        
+        $sql = "SELECT id, publication_time, email, full_name, message FROM reviews ORDER BY publication_time DESC";
+        
         $stmt = $this->connection->prepare($sql);
+        
         $stmt->execute();
         
         $reviews = [];
@@ -62,11 +70,14 @@ class ReviewRepository
     
     private function mapToReview(array $row): Review
     {
-        $review = new Review();
-        $review->id = (int)$row['id'];
-        $review->publicationTime = DateTime::createFromFormat('Y-m-d H:i:s', $row['publication_time']);
-        $review->FullName = $row['full_name'];
-        $review->message = $row['message'];
+        $review = new Review(
+            $row['full_name'],
+            $row['email'],
+            $row['message']
+        );
+    
+        $review->publicationTime = DateTime::createFromFormat('Y-m-d G:i:s.u', $row['publication_time']);
+        $review->id = $row['id'];
         
         return $review;
     }

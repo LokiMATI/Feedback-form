@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
+require_once 'Controllers/ReviewController.php';
 
 session_start();
 
@@ -19,10 +20,11 @@ $routes = [
 
 if (isset($routes[$method][$request])) {
     list($controller, $action) = explode('@', $routes[$method][$request]);
-    $controllerClass = "App\\Controllers\\$controller";
+    $controllerClass = "app\\controllers\\$controller";
     
     if (class_exists($controllerClass)) {
         $controllerInstance = new $controllerClass();
+        
         $controllerInstance->$action();
     } else {
         http_response_code(404);

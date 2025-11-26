@@ -1,5 +1,7 @@
 <?php
+
 $content = ob_start();
+include __DIR__ . '/../layout.php';
 ?>
 <div class="card">
     <h1>Все отзывы (<?= count($reviews) ?>)</h1>
@@ -9,7 +11,8 @@ $content = ob_start();
     <?php else: ?>
         <?php foreach ($reviews as $review): ?>
             <div class="review-item">
-                <div class="review-author"><?= htmlspecialchars($review->FullName) ?></div>
+                <div class="review-author"><?= htmlspecialchars($review->fullName) ?></div>
+                <div class="review-email"><?= htmlspecialchars($review->email) ?></div>
                 <div class="review-date"><?= $review->publicationTime->format('d.m.Y в H:i') ?></div>
                 <div class="review-message"><?= nl2br(htmlspecialchars($review->message)) ?></div>
             </div>
@@ -21,6 +24,5 @@ $content = ob_start();
     </p>
 </div>
 <?php
-$content = ob_get_clean();
-include __DIR__ . '/../layout.php';
+
 ?>
