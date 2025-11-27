@@ -22,8 +22,6 @@ class ReviewRepository
         
         $stmt = $this->connection->prepare($sql);
 
-        echo "Test";
-
         $stmt->execute([
             ':full_name' => trim($review->fullName),
             ':message' => trim($review->message),

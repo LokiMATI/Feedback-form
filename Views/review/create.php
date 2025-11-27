@@ -28,21 +28,3 @@ include __DIR__ . '/../layout.php';
     </form>
 </div>
 
-<?php if (!empty($reviews)): ?>
-<div class="card">
-    <h2>Последние отзывы (<?= count($reviews) ?>)</h2>
-    <?php foreach (array_slice($reviews, 0, 5) as $review): ?>
-        <div class="review-item">
-            <div class="review-author"><?= htmlspecialchars($review->FullName) ?></div>
-            <div class="review-date"><?= $review->publicationTime->format('d.m.Y в H:i') ?></div>
-            <div class="review-message"><?= nl2br(htmlspecialchars($review->message)) ?></div>
-        </div>
-    <?php endforeach; ?>
-    
-    <?php if (count($reviews) > 5): ?>
-        <p style="text-align: center; margin-top: 15px;">
-            <a href="/reviews">Показать все отзывы</a>
-        </p>
-    <?php endif; ?>
-</div>
-<?php endif; ?>

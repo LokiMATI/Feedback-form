@@ -36,7 +36,6 @@ class ReviewController
         $email = trim($_POST['email'] ?? '');
         $message = trim($_POST['message'] ?? '');
         
-        
         $result = $this->reviewService->createReview($fullName, $email, $message);
         
         if ($result['success']) {
