@@ -42,7 +42,7 @@ class Review{
             $errors[] = 'Имя слишком длинное (максимум 100 символов)';
         }
 
-        if (filter_var($this->email, FILTER_VALIDATE_EMAIL)){
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)){
             $errors[] = 'Неверный ввод email';
         }
         
