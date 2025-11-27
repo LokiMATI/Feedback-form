@@ -2,7 +2,7 @@
 namespace app\repositories;
 
 use PDO;
-use App\Models\Review;
+use app\models\Review;
 use DateTime;
 
 class ReviewRepository
@@ -14,15 +14,40 @@ class ReviewRepository
         $this->connection = $connection;
     }
     
-    /**
-     * Получить все отзывы из базы данных
-     * 
-     * @return Review[]
-     */
+    public function create(Review $review): bool
+    {
+        $sql = "INSERT INTO reviews ( full_name, message, email) 
+                VALUES ( :full_name, :message, :email) 
+                RETURNING id";
+        
+        $stmt = $this->connection->prepare($sql);
+
+        echo "Test";
+
+        $stmt->execute([
+            ':full_name' => trim($review->fullName),
+            ':message' => trim($review->message),
+            ':email' => trim($review->email)
+        ]);
+
+        echo "Test";
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result && isset($result['id'])) {
+            $review->id = (int)$result['id'];
+            return true;
+        }
+        
+        return false;
+    }
+    
     public function findAll(): array
     {
-        $sql = "SELECT id, publication_time, full_name, message FROM reviews ORDER BY publication_time DESC";
+        
+        $sql = "SELECT id, publication_time, email, full_name, message FROM reviews ORDER BY publication_time DESC";
+        
         $stmt = $this->connection->prepare($sql);
+        
         $stmt->execute();
         
         $reviews = [];
@@ -33,9 +58,6 @@ class ReviewRepository
         return $reviews;
     }
     
-    /**
-     * Найти отзыв по ID
-     */
     public function findById(int $id): ?Review
     {
         $sql = "SELECT id, publication_time, full_name, message FROM reviews WHERE id = :id";
@@ -43,83 +65,19 @@ class ReviewRepository
         $stmt->execute(['id' => $id]);
         
         $row = $stmt->fetch();
-        if (!$row) {
-            return null;
-        }
-        
-        return $this->mapToReview($row);
+        return $row ? $this->mapToReview($row) : null;
     }
     
-    /**
-     * Сохранить отзыв в базу данных
-     */
-    public function save(Review $review): bool
-    {
-        if ($review->id === 0) {
-            return $this->insert($review);
-        } else {
-            return $this->update($review);
-        }
-    }
-    
-    private function insert(Review $review): bool
-    {
-        $sql = "INSERT INTO reviews (publication_time, full_name, message) 
-                VALUES (:publication_time, :full_name, :message) 
-                RETURNING id"; // PostgreSQL возвращает ID через RETURNING
-        
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute([
-            'publication_time' => $review->publicationTime->format('Y-m-d H:i:s'),
-            'full_name' => $review->fullName,
-            'message' => $review->message
-        ]);
-        
-        // Получаем ID из результата
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result && isset($result['id'])) {
-            $review->id = (int)$result['id'];
-            return true;
-        }
-        
-        return false;
-    }
-    
-    private function update(Review $review): bool
-    {
-        $sql = "UPDATE reviews SET 
-                publication_time = :publication_time,
-                full_name = :full_name,
-                message = :message
-                WHERE id = :id";
-        
-        $stmt = $this->connection->prepare($sql);
-        return $stmt->execute([
-            'id' => $review->id,
-            'publication_time' => $review->publicationTime->format('Y-m-d H:i:s'),
-            'full_name' => $review->fullName,
-            'message' => $review->message
-        ]);
-    }
-    
-    /**
-     * Преобразовать массив данных из БД в объект Review
-     */
     private function mapToReview(array $row): Review
     {
-        $review = new Review();
-        $review->id = (int)$row['id'];
-        
-        // Для PostgreSQL дата может быть в формате timestamp
-        $publicationTime = $row['publication_time'];
-        if (is_string($publicationTime)) {
-            $review->publicationTime = DateTime::createFromFormat('Y-m-d H:i:s', $publicationTime);
-        } else {
-            $review->publicationTime = new DateTime($publicationTime);
-        }
-        
-        $review->FullName = $row['full_name'];
-        $review->message = $row['message'];
+        $review = new Review(
+            $row['full_name'],
+            $row['email'],
+            $row['message']
+        );
+    
+        $review->publicationTime = DateTime::createFromFormat('Y-m-d G:i:s.u', $row['publication_time']);
+        $review->id = $row['id'];
         
         return $review;
     }
