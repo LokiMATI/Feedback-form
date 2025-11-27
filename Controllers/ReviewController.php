@@ -62,5 +62,11 @@ class ReviewController
         $reviews = $this->reviewService->getAllReviews();
         require __DIR__ . '/../Views/review/list.php';
     }
+
+    public function getReviews(): void
+    {
+        $reviews = $this->reviewService->getAllReviews();
+        echo json_encode($reviews);
+    }
 }
 ?>

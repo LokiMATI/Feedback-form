@@ -15,6 +15,7 @@ $routes = [
     'GET' => [
         '/' => 'ReviewController@create',
         '/reviews' => 'ReviewController@index',
+        '/api/reviews' => 'ReviewController@getReviews'
     ],
     'POST' => [
         '/reviews/store' => 'ReviewController@store',
